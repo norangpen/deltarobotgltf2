@@ -10,27 +10,32 @@ let controls;
 let isAnimationLoaded = false;  // To track if the animation model has been loaded
 
 function init() {
-    scene = new THREE.Scene();
-    clock = new THREE.Clock();
+    document.addEventListener('DOMContentLoaded', () => {
+        scene = new THREE.Scene();
+        clock = new THREE.Clock();
 
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(100, 50, 200);
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(100, 50, 200);
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(new THREE.Color('grey'));
-    document.body.appendChild(renderer.domElement);
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(new THREE.Color('grey'));
+        document.body.appendChild(renderer.domElement);
 
-    controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.1;
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.1;
 
-    setupLighting();
-    loadStaticModel();
+        setupLighting();
+        loadStaticModel();
 
-    // Setup the event listener for the play button to load and play animations
-    document.getElementById('playButton').addEventListener('click', loadAndPlayAnimations);
+        // Setup the event listener for the play button to load and play animations
+        document.getElementById('playButton').addEventListener('click', loadAndPlayAnimations);
+
+        animate(); // Start the animation loop here to avoid multiple calls
+    });
 }
+
 
 function setupLighting() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -43,7 +48,7 @@ function setupLighting() {
 
 function loadStaticModel() {
     const loader = new GLTFLoader();
-    loader.load('models/Animations.gltf', (gltf) => {
+    loader.load('models/StaticModel.gltf', (gltf) => {
         scene.add(gltf.scene);
         console.log('Static model loaded.');
     }, undefined, function (error) {
