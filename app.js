@@ -1,41 +1,38 @@
+// Import necessary modules from jsDelivr CDN
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 
-
-let camera, scene, renderer, clock;
-let mixer;
+let camera, scene, renderer, clock, mixer;
 const animations = [];
 let controls;
-let isAnimationLoaded = false;  // To track if the animation model has been loaded
+let isAnimationLoaded = false;
 
 function init() {
-    document.addEventListener('DOMContentLoaded', () => {
-        scene = new THREE.Scene();
-        clock = new THREE.Clock();
+    scene = new THREE.Scene();
+    clock = new THREE.Clock();
 
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-        camera.position.set(100, 50, 200);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
+    camera.position.set(100, 50, 200);
 
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(new THREE.Color('grey'));
-        document.body.appendChild(renderer.domElement);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(new THREE.Color('grey'));
+    document.body.appendChild(renderer.domElement);
 
-        controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.1;
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.1;
 
-        setupLighting();
-        loadStaticModel();
+    setupLighting();
+    loadStaticModel();
 
-        // Setup the event listener for the play button to load and play animations
-        document.getElementById('playButton').addEventListener('click', loadAndPlayAnimations);
+    document.getElementById('playButton').addEventListener('click', loadAndPlayAnimations);
 
-        animate(); // Start the animation loop here to avoid multiple calls
-    });
+    window.addEventListener('resize', onWindowResize, false);
+
+    animate();
 }
-
 
 function setupLighting() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -48,10 +45,10 @@ function setupLighting() {
 
 function loadStaticModel() {
     const loader = new GLTFLoader();
-    loader.load('models/StaticModel.gltf', (gltf) => {
+    loader.load('models/Animations.gltf', (gltf) => {
         scene.add(gltf.scene);
         console.log('Static model loaded.');
-    }, undefined, function (error) {
+    }, undefined, (error) => {
         console.error('Error loading the static model:', error);
     });
 }
@@ -65,10 +62,10 @@ function loadAndPlayAnimations() {
                 const action = mixer.clipAction(clip);
                 animations.push(action);
             });
+            isAnimationLoaded = true;
             console.log('Animation file loaded and mixer initialized.');
             playAnimations();
-            isAnimationLoaded = true;
-        }, undefined, function (error) {
+        }, undefined, (error) => {
             console.error('Error loading the animation file:', error);
         });
     } else {
@@ -81,6 +78,7 @@ function playAnimations() {
         anim.stop();
         anim.play();
     });
+    console.log('Animations played.');
 }
 
 function animate() {
@@ -93,14 +91,13 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-window.addEventListener('resize', () => {
+function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
     controls.update();
-});
+}
 
 init();
-animate();
 
 
