@@ -43,7 +43,7 @@ function setupLighting() {
 
 function loadStaticModel() {
     const loader = new GLTFLoader();
-    loader.load('models/StaticModel.gltf', (gltf) => {
+    loader.load('models/Animations.gltf', (gltf) => {
         scene.add(gltf.scene);
         console.log('Static model loaded.');
     }, undefined, function (error) {
